@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -29,6 +31,8 @@ public class MainActivity extends Activity {
 
 	private Receiver receiver;
 
+	private InputMethodManager inputMethodManager;
+
 	@Override
 	protected void onPause() {
 		save.setOnClickListener(null);
@@ -46,6 +50,7 @@ public class MainActivity extends Activity {
 		senderList = (ListView) findViewById(R.id.sender_list);
 		smsDatabaseHelper = SMSDatabaseHelper.getInstance(mContext);
 		receiver = new Receiver();
+		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 
 	@Override
@@ -61,13 +66,22 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				String senderId = senderName.getText().toString();
-				Boolean result = smsDatabaseHelper.insertSender(senderId, 0);
-				senderName.setText("");
-				if (!result) {
-					Toast.makeText(mContext, "Already existed sender",
+				if (senderId.equals("") || senderId == null) {
+					Toast.makeText(mContext, "Please Add sender ID",
 							Toast.LENGTH_LONG).show();
+				} else {
+
+					Boolean result = smsDatabaseHelper
+							.insertSender(senderId, 0);
+					senderName.setText("");
+					if (!result) {
+						Toast.makeText(mContext, "Already existed sender",
+								Toast.LENGTH_LONG).show();
+					}
+					showList();
+					inputMethodManager.hideSoftInputFromWindow(
+							senderName.getWindowToken(), 0);
 				}
-				showList();
 			}
 		});
 	}
