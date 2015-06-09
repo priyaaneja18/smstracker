@@ -32,10 +32,11 @@ public class CustomAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		if(senderList != null) {
-		return senderList.size();
-		} else
-			return -1;
+		if (senderList != null) {
+		    return senderList.size();
+		} else {
+		    return -1;
+		}
 	}
 
 	@Override
